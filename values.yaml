@@ -1,0 +1,35 @@
+# Override configuration from https://github.com/jenkins-x/jenkins-x-platform/blob/master/jenkins-x-platform/values.yaml
+expose:
+  config:
+    domain: dev.nuxeo.com
+    exposer: Ingress
+    http: true
+    tlsacme: true
+    tlsSecretName: $NAMESPACE-tls
+    urltemplate: '"{{.Service}}.{{.Namespace}}.{{.Domain}}"'
+jenkins:
+  Master:
+    Image: $DOCKER_REGISTRY/nuxeo/$NAMESPACE-jenkinsx
+    ImageTag: 0.0.1
+  Persistence:
+    volumes:
+      - name: jenkins-secrets
+        secret:
+          secretName: jenkins-secrets
+    mounts:
+      - name: jenkins-secrets
+        readOnly: true
+        mountPath: /run/secrets/jenkins
+  Servers:
+    Global:
+      EnvVars:
+        PUBLIC_DOCKER_REGISTRY: docker.packages.nuxeo.com
+        PRIVATE_DOCKER_REGISTRY: docker-private.packages.nuxeo.com
+
+PipelineSecrets:
+  DockerConfig: |-
+    $DOCKER_REGISTRY_CONFIG
+
+docker-registry:
+  persistence:
+    size: 300Gi
