@@ -25,6 +25,14 @@ jenkins:
       EnvVars:
         PUBLIC_DOCKER_REGISTRY: docker.packages.nuxeo.com
         PRIVATE_DOCKER_REGISTRY: docker-private.packages.nuxeo.com
+  Agent:
+    PodTemplates:
+      # fix jx create devpod -l jx-base
+      JX-base:
+        DevPodPorts: 9999
+        Containers:
+          JX-base:
+            LimitCpu: "1"
 
 PipelineSecrets:
   DockerConfig: |-
